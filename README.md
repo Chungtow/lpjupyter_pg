@@ -1,7 +1,7 @@
-# 1、项目简介
+## 1、项目简介
 `lpjupyter_pg`是一个基于`JupyterHub`的个人开发者环境镜像构建项目。该项目使用`Docker`构建一个包含`JupyterHub`、`JupyterLab`和其他必要依赖项的`Docker`镜像，适用于多用户管理和开发环境部署，支持定时任务调度。
 
-# 2、目录结构
+## 2、目录结构
 ```plain
 .
 ├── build.sh
@@ -11,14 +11,14 @@
 └── README.md
 ```
 
-# 3、前提条件
+## 3、前提条件
 在开始之前，请确保满足以下前提条件：
 
 1. **操作系统**：Linux 系统（推荐 Ubuntu 20.04 或更高版本）。
 2. **Docker 安装**：系统上已安装并配置好 Docker。
 3. **网络畅通**：确保机器可以访问互联网，以便下载必要的依赖项。
 
-# 4、使用说明
+## 4、使用说明
 ### 步骤一：克隆项目
 你可以通过 HTTPS 或 SSH 方式克隆项目到本地：
 
@@ -107,7 +107,11 @@ docker run -d --name myjupyter \
   liangpu/jupyter:pg
 ```
 
-# 常见问题及解决方法
+### 步骤六：访问服务
+打开浏览器，输入`http://(服务器IP):8000` 即可访问。如果部署至本机上，可使用`http://localhost:8000`访问。
+
+
+## 常见问题及解决方法
 #### 1. Docker 安装问题
 + **问题描述**：无法找到 Docker 命令。
 + **解决方法**：确认 Docker 是否正确安装。
@@ -134,9 +138,9 @@ docker logs myjupyter
 docker run -d --name myjupyter -p 8001:8000 liangpu/jupyter:pg
 ```
 
-# 贡献者
+## 贡献者
 欢迎贡献代码！请先 fork 本项目并在本地进行修改，然后提交 pull request。
 
-# 许可证
+## 许可证
 本项目遵循 MIT 协议。
 
