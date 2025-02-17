@@ -1,0 +1,62 @@
+# 设置 JupyterHub 的监听端口为 8000
+c.JupyterHub.port = 8000
+
+# 设置 PAMAuthenticator 的编码格式为 UTF-8，用于处理用户名和密码的编码问题
+c.PAMAuthenticator.encoding = 'utf8'
+
+# 定义允许登录 JupyterHub 的用户集合，只有这些用户可以访问系统
+c.Authenticator.allowed_users = {'admin', 'user1', 'user2'}
+
+# 定义管理员用户集合，这些用户拥有管理员权限，可以管理其他用户
+c.Authenticator.admin_users = {'admin'}
+
+# 设置 DummyAuthenticator 的默认密码为 "123456"，DummyAuthenticator 是一个简单的认证器，
+# 通常用于测试环境。所有用户的密码都将是这个值。
+c.DummyAuthenticator.password = "123456"
+
+# 允许管理员用户访问其他普通用户的服务（例如 Notebook 界面）
+c.JupyterHub.admin_access = True
+
+# 如果用户不存在于系统中，则自动创建该用户（仅适用于 LocalAuthenticator）。
+# 这在某些情况下非常有用，比如新用户首次登录时会自动为其创建系统账户。
+c.LocalAuthenticator.create_system_users = True
+
+
+# 为每个用户在/home/jupyterusers下创建以用户名为文件名的独立的文件夹
+import os
+from jupyterhub.spawner import LocalProcessSpawner
+
+class MySpawner(LocalProcessSpawner):
+    def user_env(self, env):
+        user_dir = f'/home/jupyterusers/{self.user.name}'
+        os.makedirs(user_dir, exist_ok=True)
+        env['HOME'] = user_dir
+        return env
+        
+c.JupyterHub.spawner_class = MySpawner
+
+# 设置JupyterHub用户文件存储路径
+c.Spawner.notebook_dir = '/home/jupyterusers/{username}'
+
+# 确保用户的其他必要目录也存在
+def ensure_user_dirs(spawner):
+    username = spawner.user.name
+    user_home = f'/home/jupyterusers/{username}'
+    os.makedirs(f'{user_home}/.local/share/jupyter/runtime', exist_ok=True)
+    # 设置所有权
+    os.system(f'chown -R {username}:{username} {user_home}')
+
+    # 设置权限
+    os.system(f'chmod -R 755 {user_home}')
+
+c.Spawner.pre_spawn_hook = ensure_user_dirs
+
+# 设置JupyterHub启动目录为JupyterLab
+c.Spawner.default_url = '/lab'
+
+# 允许root用户登录
+c.Spawner.args = ['--allow-root'] 
+
+# 用户注销时关闭JupyterLab服务，设置超时时间为10分钟
+c.JupyterHub.shutdown_on_logout = True  
+c.Spawner.start_timeout = 600
