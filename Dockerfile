@@ -28,7 +28,9 @@ RUN echo 'Asia/Shanghai' > /etc/timezone && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
 # 安装 Miniconda
-COPY Miniconda3-py312_24.11.1-0-Linux-x86_64.sh /miniconda.sh
+# COPY Miniconda3-py312_24.11.1-0-Linux-x86_64.sh /miniconda.sh
+# 使用 wget 下载 Miniconda 安装脚本并重命名为 /miniconda.sh
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py312_24.11.1-0-Linux-x86_64.sh -O /miniconda.sh
 RUN /bin/bash /miniconda.sh -b -p /opt/conda && \
     rm /miniconda.sh
 
@@ -42,9 +44,12 @@ FROM base AS nodejs_setup
 # 设置工作目录到/usr/local
 WORKDIR /usr/local
 
-# 将宿主机的node压缩包添加到镜像中的/usr/local目录下，并自动解压
-ADD node-v18.16.0-linux-x64.tar.xz .
-RUN mv node-v18.16.0-linux-x64 nodejs \
+
+# 使用 wget 下载 Node.js 压缩包并解压到 /usr/local/nodejs
+RUN wget --quiet https://nodejs.org/dist/v18.16.0/node-v18.16.0-linux-x64.tar.xz -O nodejs.tar.xz && \
+    tar -xf nodejs.tar.xz && \
+    mv node-v18.16.0-linux-x64 nodejs && \
+    rm nodejs.tar.xz && \
     # 创建软链接以方便全局访问node和npm命令
     && ln -s /usr/local/nodejs/bin/node /usr/local/bin/node \
     && ln -s /usr/local/nodejs/bin/npm /usr/local/bin/npm \
