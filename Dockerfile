@@ -51,12 +51,13 @@ RUN wget --quiet https://nodejs.org/dist/v18.16.0/node-v18.16.0-linux-x64.tar.xz
     mv node-v18.16.0-linux-x64 nodejs && \
     rm nodejs.tar.xz && \
     # 创建软链接以方便全局访问node和npm命令
-    && ln -s /usr/local/nodejs/bin/node /usr/local/bin/node \
-    && ln -s /usr/local/nodejs/bin/npm /usr/local/bin/npm \
+    ln -s /usr/local/nodejs/bin/node /usr/local/bin/node && \
+    ln -s /usr/local/nodejs/bin/npm /usr/local/bin/npm && \
     # 使用npm全局安装configurable-http-proxy
-    && npm install -g configurable-http-proxy \
+    npm install -g configurable-http-proxy && \
     # 使用ln命令建立软链接同步
-    && ln -s /usr/local/nodejs/bin/configurable-http-proxy /usr/local/bin/configurable-http-proxy
+    ln -s /usr/local/nodejs/bin/configurable-http-proxy /usr/local/bin/configurable-http-proxy
+
 
 # 确认安装是否成功
 RUN node -v && npm -v && configurable-http-proxy --version
